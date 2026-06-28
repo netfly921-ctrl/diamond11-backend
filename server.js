@@ -1,11 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const path = require('path');
 dotenv.config();
+const cors = require('cors');
 
+app.use(cors({
+  origin: [
+    'https://diamond11-frontend.vercel.app/login', // YAHAN APNA VERCEL URL DAALO
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));
 const app = express();
 const PORT = process.env.PORT || 5000;
 
