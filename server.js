@@ -6,15 +6,17 @@ const path = require('path');
 dotenv.config();
 const cors = require('cors');
 
+// ✅ FIXED: app ko pehle initialize kar diya
+const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(cors({
   origin: [
-    'https://diamond11-frontend.vercel.app/login', // YAHAN APNA VERCEL URL DAALO
+    'https://diamond11-frontend.vercel.app', // CORS mein sirf main domain aata hai, "/login" nahi
     'http://localhost:3000'
   ],
   credentials: true
 }));
-const app = express();
-const PORT = process.env.PORT || 5000;
 
 // ✅ 1. CORS - Allow everything for development
 app.use(cors({
@@ -71,14 +73,12 @@ try {
   app.use('/api/leaderboard', require('./routes/leaderboard'));
   app.use('/api/dailybonus', require('./routes/dailybonus'));
   app.use('/api/features', require('./routes/features'));
-  app.use('/api/features', require('./routes/features'));
   app.use('/api/luckyspin', require('./routes/luckyspin'));
   app.use('/api/cashback', require('./routes/cashback'));
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/jackpot', require('./routes/jackpot'));
-app.use('/api/luckyspin', require('./routes/luckyspin'));
-app.use('/api/giftcode', require('./routes/giftcode'));
-app.use('/api/admin/game-control', require('./routes/game-admin'));
+  app.use('/api/tasks', require('./routes/tasks'));
+  app.use('/api/jackpot', require('./routes/jackpot'));
+  app.use('/api/giftcode', require('./routes/giftcode'));
+  app.use('/api/admin/game-control', require('./routes/game-admin'));
   console.log('✅ All routes loaded');
 } catch (error) {
   console.error('❌ Route error:', error.message);
