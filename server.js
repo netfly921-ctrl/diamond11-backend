@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ 1. CLEAN CORS (Conflict hata diya)
 app.use(cors({
-  origin: true, // Har origin ko allow karega with credentials (Vercel ke liye best hai)
+  origin: true, 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -36,42 +36,41 @@ app.use(helmet({
 }));
 
 // ✅ 4. Serve Games Folder
-// Note: Games folder ko 'backend' folder ke andar daal dena best rahega
 app.use('/games', express.static(path.join(__dirname, 'games'))); 
 app.use('/games', express.static(path.join(__dirname, '../games')));
 
-// ✅ 5. Routes
+// ✅ 5. Foolproof Routes (Chahe /api ho ya na ho, dono chalenge!)
 try {
-  app.use('/api/auth', require('./routes/auth'));
-  app.use('/api/admin', require('./routes/admin'));
-  app.use('/api/game', require('./routes/game'));
-  app.use('/api/wallet', require('./routes/wallet'));
-  app.use('/api/referral', require('./routes/referral'));
-  app.use('/api/deposit', require('./routes/deposit'));
-  app.use('/api/withdraw', require('./routes/withdraw'));
-  app.use('/api/settings', require('./routes/settings'));
-  app.use('/api/vip', require('./routes/vip'));
-  app.use('/api/coupon', require('./routes/coupon'));
-  app.use('/api/leaderboard', require('./routes/leaderboard'));
-  app.use('/api/dailybonus', require('./routes/dailybonus'));
-  app.use('/api/features', require('./routes/features'));
-  app.use('/api/luckyspin', require('./routes/luckyspin'));
-  app.use('/api/cashback', require('./routes/cashback'));
-  app.use('/api/tasks', require('./routes/tasks'));
-  app.use('/api/jackpot', require('./routes/jackpot'));
-  app.use('/api/giftcode', require('./routes/giftcode'));
-  app.use('/api/admin/game-control', require('./routes/game-admin'));
-  console.log('✅ All routes loaded');
+  app.use(['/api/auth', '/auth'], require('./routes/auth'));
+  app.use(['/api/admin', '/admin'], require('./routes/admin'));
+  app.use(['/api/game', '/game'], require('./routes/game'));
+  app.use(['/api/wallet', '/wallet'], require('./routes/wallet'));
+  app.use(['/api/referral', '/referral'], require('./routes/referral'));
+  app.use(['/api/deposit', '/deposit'], require('./routes/deposit'));
+  app.use(['/api/withdraw', '/withdraw'], require('./routes/withdraw'));
+  app.use(['/api/settings', '/settings'], require('./routes/settings'));
+  app.use(['/api/vip', '/vip'], require('./routes/vip'));
+  app.use(['/api/coupon', '/coupon'], require('./routes/coupon'));
+  app.use(['/api/leaderboard', '/leaderboard'], require('./routes/leaderboard'));
+  app.use(['/api/dailybonus', '/dailybonus'], require('./routes/dailybonus'));
+  app.use(['/api/features', '/features'], require('./routes/features'));
+  app.use(['/api/luckyspin', '/luckyspin'], require('./routes/luckyspin'));
+  app.use(['/api/cashback', '/cashback'], require('./routes/cashback'));
+  app.use(['/api/tasks', '/tasks'], require('./routes/tasks'));
+  app.use(['/api/jackpot', '/jackpot'], require('./routes/jackpot'));
+  app.use(['/api/giftcode', '/giftcode'], require('./routes/giftcode'));
+  app.use(['/api/admin/game-control', '/admin/game-control'], require('./routes/game-admin'));
+  console.log('✅ All routes loaded with compatibility mode');
 } catch (error) {
   console.error('❌ Route error:', error.message);
 }
 
-// ✅ 6. Default route (Ab localhost nahi dikhayega)
+// ✅ 6. Default route
 app.get('/', (req, res) => {
   const fullUrl = req.protocol + '://' + req.get('host');
   res.json({ 
     success: true, 
-    message: 'Diamond 11 API Running - NO RATE LIMITS',
+    message: 'Diamond 11 API Running - Compatible Mode',
     games: `${fullUrl}/games`,
     cors: 'enabled',
     status: 'online'
