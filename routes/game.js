@@ -6,12 +6,14 @@ const Game = require('../models/Game');
 router.get('/list', async (req, res) => {
   try {
     const games = await Game.find({ isActive: true }).sort({ sortOrder: 1 });
+    console.log('📤 Sending games count:', games.length);
     res.json({
       success: true,
       data: games,
       count: games.length
     });
   } catch (error) {
+    console.error('Get games error:', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 });
