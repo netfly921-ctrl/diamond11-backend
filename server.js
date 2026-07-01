@@ -11,22 +11,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ 1. CLEAN CORS (Conflict hata diya)
+// ✅ 1. CORS Configuration
 app.use(cors({
-  origin: true, 
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Preflight requests ke liye
 app.options('*', cors());
 
 // ✅ 2. Body Parser
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-// ✅ 3. Helmet - Iframe allow karne ke liye
+// ✅ 3. Helmet
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
@@ -36,10 +35,10 @@ app.use(helmet({
 }));
 
 // ✅ 4. Serve Games Folder
-app.use('/games', express.static(path.join(__dirname, 'games'))); 
+app.use('/games', express.static(path.join(__dirname, 'games')));
 app.use('/games', express.static(path.join(__dirname, '../games')));
 
-// ✅ 5. Foolproof Routes (Chahe /api ho ya na ho, dono chalenge!)
+// ✅ 5. Routes
 try {
   app.use(['/api/auth', '/auth'], require('./routes/auth'));
   app.use(['/api/admin', '/admin'], require('./routes/admin'));
@@ -70,7 +69,7 @@ app.get('/', (req, res) => {
   const fullUrl = req.protocol + '://' + req.get('host');
   res.json({ 
     success: true, 
-    message: 'Diamond 11 API Running - Compatible Mode',
+    message: 'Diamond 11 API Running',
     games: `${fullUrl}/games`,
     cors: 'enabled',
     status: 'online'
@@ -90,245 +89,12 @@ mongoose.connect(MONGODB_URI)
 .then(() => {
   console.log('🎉 MongoDB Connected Successfully!');
   
-   // ✅ Seed Default Games into MongoDB
-  const seedDefaultGames = async () => {
-    try {
-      const games = [
-        {
-          name: 'aviator',
-          code: 'aviator',
-          displayName: 'Aviator',
-          path: '/games/aviator/',
-          icon: '✈️',
-          image: '',
-          gradient: 'from-blue-500 to-cyan-400',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 1
-        },
-        {
-          name: 'wingo',
-          code: 'wingo',
-          displayName: 'Wingo',
-          path: '/games/wingo/',
-          icon: '🎡',
-          image: '',
-          gradient: 'from-orange-500 to-red-500',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 2
-        },
-        {
-          name: 'coinflip',
-          code: 'coinflip',
-          displayName: 'Coin Flip',
-          path: '/games/coinflip/',
-          icon: '🪙',
-          image: '',
-          gradient: 'from-yellow-400 to-amber-600',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 3
-        },
-        {
-          name: 'andarbahar',
-          code: 'andarbahar',
-          displayName: 'Andar Bahar',
-          path: '/games/andarbahar/',
-          icon: '🃏',
-          image: '',
-          gradient: 'from-purple-600 to-pink-500',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 4
-        },
-        {
-          name: 'dragontiger',
-          code: 'dragontiger',
-          displayName: 'Dragon Tiger',
-          path: '/games/dragontiger/',
-          icon: '🐉',
-          image: '',
-          gradient: 'from-red-600 to-orange-600',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 5
-        },
-        {
-          name: 'colorprediction',
-          code: 'colorprediction',
-          displayName: 'Color Prediction',
-          path: '/games/colorprediction/',
-          icon: '🎨',
-          image: '',
-          gradient: 'from-violet-500 to-indigo-500',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 6
-        },
-        {
-          name: 'teenpatti',
-          code: 'teenpatti',
-          displayName: 'Teen Patti',
-          path: '/games/teenpatti/',
-          icon: '♠️',
-          image: '',
-          gradient: 'from-emerald-500 to-teal-700',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 7
-        },
-        {
-          name: 'mines',
-          code: 'mines',
-          displayName: 'Mines',
-          path: '/games/mines/',
-          icon: '💣',
-          image: '',
-          gradient: 'from-gray-700 to-slate-900',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 8
-        },
-        {
-          name: 'limbo',
-          code: 'limbo',
-          displayName: 'Limbo',
-          path: '/games/limbo/',
-          icon: '🚀',
-          image: '',
-          gradient: 'from-indigo-500 to-purple-900',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 9
-        },
-        {
-          name: 'dice',
-          code: 'dice',
-          displayName: 'Dice',
-          path: '/games/dice/',
-          icon: '🎲',
-          image: '',
-          gradient: 'from-rose-500 to-red-800',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 10
-        },
-        {
-          name: 'plinko',
-          code: 'plinko',
-          displayName: 'Plinko',
-          path: '/games/plinko/',
-          icon: '⚪',
-          image: '',
-          gradient: 'from-blue-400 to-blue-800',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 11
-        },
-        {
-          name: 'roulette',
-          code: 'roulette',
-          displayName: 'Roulette',
-          path: '/games/roulette/',
-          icon: '🎯',
-          image: '',
-          gradient: 'from-red-700 to-black',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 12
-        },
-        {
-          name: 'chickenpro',
-          code: 'chickenpro',
-          displayName: 'Chicken Pro',
-          path: '/games/CHICKEN PRO/',
-          icon: '🐔',
-          image: '',
-          gradient: 'from-yellow-400 to-orange-600',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 13
-        },
-        {
-          name: 'hilo',
-          code: 'hilo',
-          displayName: 'Hilo',
-          path: '/games/hilo/',
-          icon: '🔢',
-          image: '',
-          gradient: 'from-green-600 to-lime-500',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 14
-        },
-        {
-          name: 'wheel',
-          code: 'wheel',
-          displayName: 'Wheel',
-          path: '/games/wheel/',
-          icon: '🎡',
-          image: '',
-          gradient: 'from-fuchsia-500 to-pink-700',
-          isActive: true,
-          active: true,
-          status: 'active',
-          sortOrder: 15
-        }
-      ];
-
-      const collection = mongoose.connection.db.collection('games');
-
-      for (const game of games) {
-        await collection.updateOne(
-          { code: game.code },
-          {
-            $set: {
-              ...game,
-              updatedAt: new Date()
-            },
-            $setOnInsert: {
-              createdAt: new Date()
-            }
-          },
-          { upsert: true }
-        );
-      }
-
-      console.log('✅ Default games seeded/updated in MongoDB');
-    } catch (err) {
-      console.error('❌ Games seed error:', err.message);
-    }
-  };
-
-  seedDefaultGames();
-
-// Seed games only if collection is empty
-Game.countDocuments().then(count => {
-  if (count === 0) {
-    Game.insertMany(defaultGames)
-      .then(() => console.log('✅ 15 default games seeded'))
-      .catch(err => console.error('Seed error:', err.message));
-  }
-}).catch(() => {});
-  // Create default admin
+  // ✅ IMPORTANT: Yahan Game model import kar rahe hain (missing tha pehle)
+  const Game = require('./models/Game');
   const Admin = require('./models/Admin');
   const bcrypt = require('bcryptjs');
   
+  // ✅ Create default admin
   Admin.findOne({ username: 'admin' }).then(async (admin) => {
     if (!admin) {
       const hashedPassword = await bcrypt.hash('admin123', 10);
@@ -340,9 +106,9 @@ Game.countDocuments().then(count => {
       });
       console.log('✅ Default admin: admin / admin123');
     }
-  }).catch(() => {});
+  }).catch((err) => console.error('Admin creation error:', err.message));
 
-  // Create settings
+  // ✅ Create settings
   const Setting = require('./models/Setting');
   const settings = [
     { key: 'upiId', value: 'admin@upi' },
@@ -352,8 +118,41 @@ Game.countDocuments().then(count => {
     { key: 'bankName', value: 'State Bank' },
     { key: 'referralCommissionPercent', value: '5' }
   ];
-  settings.forEach(s => Setting.findOne({ key: s.key }).then(exists => { if (!exists) Setting.create(s); }).catch(() => {}));
-  
+  settings.forEach(s => 
+    Setting.findOne({ key: s.key })
+      .then(exists => { if (!exists) Setting.create(s); })
+      .catch(() => {})
+  );
+
+  // ✅ Seed Default Games (Game model already imported upar)
+  const defaultGames = [
+    { name: 'aviator', code: 'aviator', displayName: 'Aviator', path: '/games/aviator/', icon: '✈️', gradient: 'from-blue-500 to-cyan-400', isPopular: true, sortOrder: 1 },
+    { name: 'wingo', code: 'wingo', displayName: 'Wingo', path: '/games/wingo/', icon: '🎡', gradient: 'from-orange-500 to-red-500', isPopular: true, sortOrder: 2 },
+    { name: 'coinflip', code: 'coinflip', displayName: 'Coin Flip', path: '/games/coinflip/', icon: '🪙', gradient: 'from-yellow-400 to-amber-600', isPopular: true, sortOrder: 3 },
+    { name: 'andarbahar', code: 'andarbahar', displayName: 'Andar Bahar', path: '/games/andarbahar/', icon: '🃏', gradient: 'from-purple-600 to-pink-500', sortOrder: 4 },
+    { name: 'dragontiger', code: 'dragontiger', displayName: 'Dragon Tiger', path: '/games/dragontiger/', icon: '🐉', gradient: 'from-red-600 to-orange-600', sortOrder: 5 },
+    { name: 'colorprediction', code: 'colorprediction', displayName: 'Color Prediction', path: '/games/colorprediction/', icon: '🎨', gradient: 'from-violet-500 to-indigo-500', sortOrder: 6 },
+    { name: 'teenpatti', code: 'teenpatti', displayName: 'Teen Patti', path: '/games/teenpatti/', icon: '♠️', gradient: 'from-emerald-500 to-teal-700', sortOrder: 7 },
+    { name: 'mines', code: 'mines', displayName: 'Mines', path: '/games/mines/', icon: '💣', gradient: 'from-gray-700 to-slate-900', sortOrder: 8 },
+    { name: 'limbo', code: 'limbo', displayName: 'Limbo', path: '/games/limbo/', icon: '🚀', gradient: 'from-indigo-500 to-purple-900', sortOrder: 9 },
+    { name: 'dice', code: 'dice', displayName: 'Dice', path: '/games/dice/', icon: '🎲', gradient: 'from-rose-500 to-red-800', sortOrder: 10 },
+    { name: 'plinko', code: 'plinko', displayName: 'Plinko', path: '/games/plinko/', icon: '⚪', gradient: 'from-blue-400 to-blue-800', sortOrder: 11 },
+    { name: 'roulette', code: 'roulette', displayName: 'Roulette', path: '/games/roulette/', icon: '🎯', gradient: 'from-red-700 to-black', sortOrder: 12 },
+    { name: 'chickenpro', code: 'chickenpro', displayName: 'Chicken Pro', path: '/games/CHICKEN PRO/', icon: '🐔', gradient: 'from-yellow-400 to-orange-600', sortOrder: 13 },
+    { name: 'hilo', code: 'hilo', displayName: 'Hilo', path: '/games/hilo/', icon: '🔢', gradient: 'from-green-600 to-lime-500', sortOrder: 14 },
+    { name: 'wheel', code: 'wheel', displayName: 'Wheel', path: '/games/wheel/', icon: '🎡', gradient: 'from-fuchsia-500 to-pink-700', sortOrder: 15 },
+  ];
+
+  Game.countDocuments().then(count => {
+    if (count === 0) {
+      Game.insertMany(defaultGames)
+        .then(() => console.log('✅ 15 default games seeded successfully'))
+        .catch(err => console.error('❌ Seed error:', err.message));
+    } else {
+      console.log(`ℹ️ Games already exist in DB (${count} games found)`);
+    }
+  }).catch((err) => console.error('Count error:', err.message));
+
 })
 .catch((err) => {
   console.error('❌ MongoDB Error:', err.message);
